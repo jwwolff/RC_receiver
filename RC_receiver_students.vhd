@@ -91,7 +91,6 @@ begin
 	-- two process state machine
 	state_proc : process(clk) 
 	begin
-		begin 
 			if rising_edge(clk) then
 				if( reset = '0') then 
 					state <= init;
@@ -101,8 +100,7 @@ begin
 			end if;
 	end process state_proc;
 		
-	nxt_state_proc : process(state, LC_on_counter, LC_off_counter, clock_counter, 
-		data_counter, data, posedge)
+	nxt_state_proc : process(state, LC_on_counter, LC_off_counter, clock_counter, data_counter, data, posedge)
 	begin
 		reading_LC_on <=0; reading_LC_off <=0;
 		reading_data <=0; checking_data <=0;
@@ -116,42 +114,42 @@ begin
 		--	data_bit
 		case state is
 			when init =>
-				if(posedge = '1') then
-					nxt_state <= read_LC_on;
-				end if;
+					if(posedge = '1') then
+						nxt_state <= read_LC_on;
+					end if;
 			when read_LC_on =>
-				if(data = '0') then
-					nxt_state <= check_LC_on_count;
-				end if;
+					if(data = '0') then
+						nxt_state <= check_LC_on_count;
+					end if;
 			when check_LC_on_count =>
-				if(LC_on_counter <= LC_on_max) then
-					nxt_state <= read_LC_off;
-				elsif (LC_on_counter > LC_on_max) then
-					nxt_state <= init;
-				end if
+					if(LC_on_counter <= LC_on_max) then
+						nxt_state <= read_LC_off;
+					elsif (LC_on_counter > LC_on_max) then
+						nxt_state <= init;
+					end if;
 			when read_LC_off =>
-				if(posedge = "1") then
-					nxt_state = check_LC_off_count;
-				end if;
+					if(posedge = "1") then
+						nxt_state <= check_LC_off_count;
+					end if;
 			when check_LC_off_count =>
-				if(LC_off_counter <= LC_off_max) then
-					nxt_state <= read_date;
-				elsif(LC_off_counter > LC_off_max) then
-					nxt_state <= init;
-				end if;
+					if(LC_off_counter <= LC_off_max) then
+						nxt_state <= read_date;
+					elsif(LC_off_counter > LC_off_max) then
+						nxt_state <= init;
+					end if;
 			when read_data =>
-				if(posedge = '1') then
-					nxt_state <= check_data;
-				end if;
+					if(posedge = '1') then
+						nxt_state <= check_data;
+					end if;
 			when check_data =>
-				if(data_counter /= 31) then
-					nxt_state <= read_data;
-				elsif(data_counter = 31) then
-					nxt_state <= init;
-				end if;
+					if(data_counter /= 31) then
+						nxt_state <= read_data;
+					elsif(data_counter = 31) then
+						nxt_state <= init;
+					end if;
 			when others =>
-				nxt_state <= init;
-			end case
+					nxt_state <= init;
+			end case;
 
 	end process nxt_state_proc;
 	
