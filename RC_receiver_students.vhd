@@ -236,7 +236,7 @@ begin
 	
 	shift_reg_proc : process(clk)
 	begin
-		if(checking_data = '1')then
+		if(checking_data = '1' and rising_edge(clk))then
 			shift_reg <= data_bit & shift_reg(max_bits-1 downto 1);
 		end if;
 		-- process to define the shift register that holds the incomming data.  (hint:  don't use canned VHDL functions for shifting)

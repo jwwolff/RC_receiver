@@ -111,7 +111,7 @@ begin
 			if (expected(k) /= seg(k)) then
 				write(WriteBuf, string'("ERROR:  7 seg display failed at k = "));
 				write(WriteBuf, k);
-				write(WriteBuf, string'("expected = "));
+				write(WriteBuf, string'(", expected = "));
 				write(WriteBuf, expected(k));
 				write(WriteBuf, string'(", seg = "));
 				write(WriteBuf, seg(k));
