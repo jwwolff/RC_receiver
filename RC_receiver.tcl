@@ -3,18 +3,18 @@ transcript off
 quit -sim	
 
 # select a directory for creation of the work directory
-cd {C:\_Eric\UD\Teaching\ECE501\Homework\Homework5}
+cd {Z:\ECE501\Sequential Logic\LFSR_18}
 vlib work
 vmap work work
 
 # compile the program and test-bench files
-vcom ../../Designs/Sequential_Logic/sim_mem_init/sim_mem_init.vhd
-vcom ../../Designs/Sequential_Logic/hex_to_7_seg/hex_to_7_seg.vhd
-vcom RC_receiver.vhd
+vcom ../sim_mem_init/sim_mem_init.vhd
+vcom ../hex_to_7_seg/hex_to_7_seg.vhd
+vcom RC_receiver_student.vhd
 vcom test_RC_receiver.vhd 
 
 # initializing the simulation window and adding waves to the simulation window
-vsim test_RC_receiver
+vsim test_RC_receiver_student
 add wave sim:/test_RC_receiver/dev_to_test/*
  
 # define simulation time
