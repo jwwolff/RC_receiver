@@ -102,8 +102,8 @@ begin
 		
 	nxt_state_proc : process(state, LC_on_counter, LC_off_counter, clock_counter, data_counter, data, posedge)
 	begin
-		reading_LC_on <=0; reading_LC_off <=0;
-		reading_data <=0; checking_data <=0;
+		reading_LC_on <='0'; reading_LC_off <='0';
+		reading_data <='0'; checking_data <='0';
 		-- define the state machine process here.  Use slide #6 on the assignment
 		-- powerpoint as a guide.  This process should also set control signals:
 		--	reading_LC_on
@@ -118,7 +118,7 @@ begin
 						nxt_state <= read_LC_on;
 					end if;
 			when read_LC_on =>
-						reading_LC_on <= 1;
+						reading_LC_on <= '1';
 					if(data = '0') then
 						nxt_state <= check_LC_on_count;
 					end if;
@@ -129,34 +129,34 @@ begin
 						nxt_state <= init;
 					end if;
 			when read_LC_off =>
-				reading_LC_off <= 1;
-					if(posedge = "1") then
+				reading_LC_off <= '1';
+					if(posedge = '1') then
 						nxt_state <= check_LC_off_count;
 					end if;
 			when check_LC_off_count =>
 					if(LC_off_counter <= LC_off_max) then
-						nxt_state <= read_date;
+						nxt_state <= read_data;
 					elsif(LC_off_counter > LC_off_max) then
 						nxt_state <= init;
 					end if;
 			when read_data =>
-				reading_data <= 1;
+				reading_data <= '1';
 					if(posedge = '1') then
 						nxt_state <= check_data;
 					end if;
 			when check_data =>
 				if(clock_counter = one_clocks) then
-					data_bit = '1';
+					data_bit <= '1';
 				elsif (Clock_counter = zero_clocks) then
-					data_bit = '0';
+					data_bit <= '0';
 				end if;
 
 				checking_data <= '1';
-					if(data_counter /= 31) then
-						nxt_state <= read_data;
-					elsif(data_counter = 31) then
-						nxt_state <= init;
-					end if;
+				if(data_counter < 31) then
+					nxt_state <= read_data;
+				else
+					nxt_state <= init;
+				end if;
 			when others =>
 					nxt_state <= init;
 			end case;
@@ -214,7 +214,7 @@ begin
 		if(rising_edge(clk)) then
 			if((checking_data = '1') or (reset = '0')) then
 				clock_counter <= 0;
-			elsif (checking_data = '1') then
+			elsif (reading_data = '1') then
 				clock_counter <= clock_counter + 1;
 			end if;
 		end if;
@@ -227,7 +227,7 @@ begin
 		if(rising_edge(clk)) then
 			if((state = init) or (reset = '0')) then
 				data_counter <= 0;
-			elsif (checking_data = '1') then
+			elsif (rising_edge(reading_data)) then
 				data_counter <= data_counter + 1;
 			end if;
 		end if;
@@ -237,7 +237,7 @@ begin
 	shift_reg_proc : process(clk)
 	begin
 		if(checking_data = '1')then
-			shift_reg = data_bit & shift_reg(max_bits-1 downto 1);
+			shift_reg <= data_bit & shift_reg(max_bits-1 downto 1);
 		end if;
 		-- process to define the shift register that holds the incomming data.  (hint:  don't use canned VHDL functions for shifting)
 	end process shift_reg_proc;

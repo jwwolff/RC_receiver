@@ -3,7 +3,7 @@ transcript off
 quit -sim	
 
 # select a directory for creation of the work directory
-cd {Z:\ECE501\Sequential Logic\LFSR_18}
+cd {Z:\ECE501\Sequential Logic\RC_receiver}
 vlib work
 vmap work work
 
@@ -14,7 +14,7 @@ vcom RC_receiver_students.vhd
 vcom test_RC_receiver.vhd 
 
 # initializing the simulation window and adding waves to the simulation window
-vsim test_RC_receiver_students
+vsim test_RC_receiver
 add wave sim:/test_RC_receiver/dev_to_test/*
  
 # define simulation time
