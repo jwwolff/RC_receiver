@@ -169,33 +169,51 @@ begin
 			end if;
 		end if;
 	end process pos_edge_proc;
+	
 	-- counter for the leader code (ones)
 	LC_on_proc : process(clk)
 	begin
 		-- process to count the number of clocks during the LC_on
 		-- portion of the incomming data sequence
 			if(rising_edge(clk)) then
-				if((reading_LC_on = '1') or (reset = '0') or (LC_on_counter = LC_on_max)) then
-					count <= 0;
+				if((state = init) or (reset = '0')) then
+					LC_on_counter <= 0;
 				elsif (state = read_LC_on) then
 					LC_on_counter <= LC_on_counter + 1;
 				end if;
 			end if;
 	end process LC_on_proc;
+
 	-- counter for the leader code (zeros)
 	LC_off_proc : process(clk)
 	begin
 		-- process to count the number of clocks during the LC_off
 		-- portion of the incomming data sequence
+		if(rising_edge(clk)) then
+			if((state = init) or (reset = '0')) then
+				LC_off_counter <= 0;
+			elsif (state = read_LC_off) then
+				LC_off_counter <= LC_off_counter + 1;
+			end if;
+		end if;
 	end process LC_off_proc;
-	-- couner to count the number of clocks per data bit
+
+	-- counter to count the number of clocks per data bit
 	clock_counter_proc : process(clk)
 	begin
 		-- process to count the number of clocks during the "data", or payload, portion of the data sequence
 	end process clock_counter_proc;
-	-- counter to counter the number of data bits
+
+	-- counter to counter the number of data bits	
 	data_counter_proc : process(clk)
 	begin
+		if(rising_edge(clk)) then
+			if((state = init) or (reset = '0')) then
+				data_counter <= 0;
+			elsif (state = ) then
+				data_counter <= data_counter + 1;
+			end if;
+		end if;
 		-- process to determine the number of data bits counted in the payload
 	end process data_counter_proc;
 	
