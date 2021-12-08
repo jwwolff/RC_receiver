@@ -118,6 +118,7 @@ begin
 						nxt_state <= read_LC_on;
 					end if;
 			when read_LC_on =>
+						reading_LC_on <= 1;
 					if(data = '0') then
 						nxt_state <= check_LC_on_count;
 					end if;
@@ -128,6 +129,7 @@ begin
 						nxt_state <= init;
 					end if;
 			when read_LC_off =>
+				reading_LC_off <= 1;
 					if(posedge = "1") then
 						nxt_state <= check_LC_off_count;
 					end if;
@@ -138,10 +140,18 @@ begin
 						nxt_state <= init;
 					end if;
 			when read_data =>
+				reading_data <= 1;
 					if(posedge = '1') then
 						nxt_state <= check_data;
 					end if;
 			when check_data =>
+				if(clock_counter = one_clocks) then
+					data_bit = '1';
+				elsif (Clock_counter = zero_clocks) then
+					data_bit = '0';
+				end if;
+				
+				checking_data <= 1;
 					if(data_counter /= 31) then
 						nxt_state <= read_data;
 					elsif(data_counter = 31) then
@@ -178,7 +188,7 @@ begin
 			if(rising_edge(clk)) then
 				if((state = init) or (reset = '0')) then
 					LC_on_counter <= 0;
-				elsif (state = read_LC_on) then
+				elsif (reading_LC_on = '1') then
 					LC_on_counter <= LC_on_counter + 1;
 				end if;
 			end if;
@@ -192,7 +202,7 @@ begin
 		if(rising_edge(clk)) then
 			if((state = init) or (reset = '0')) then
 				LC_off_counter <= 0;
-			elsif (state = read_LC_off) then
+			elsif (reading_LC_off = '1') then
 				LC_off_counter <= LC_off_counter + 1;
 			end if;
 		end if;
@@ -201,6 +211,13 @@ begin
 	-- counter to count the number of clocks per data bit
 	clock_counter_proc : process(clk)
 	begin
+		if(rising_edge(clk)) then
+			if((checking_data = '1') or (reset = '0')) then
+				clock_counter <= 0;
+			elsif (checking_data = '1') then
+				clock_counter <= clock_counter + 1;
+			end if;
+		end if;
 		-- process to count the number of clocks during the "data", or payload, portion of the data sequence
 	end process clock_counter_proc;
 
@@ -210,7 +227,7 @@ begin
 		if(rising_edge(clk)) then
 			if((state = init) or (reset = '0')) then
 				data_counter <= 0;
-			elsif (state = ) then
+			elsif (checking_data = '1') then
 				data_counter <= data_counter + 1;
 			end if;
 		end if;
