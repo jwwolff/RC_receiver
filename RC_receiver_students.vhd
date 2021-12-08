@@ -150,8 +150,8 @@ begin
 				elsif (Clock_counter = zero_clocks) then
 					data_bit = '0';
 				end if;
-				
-				checking_data <= 1;
+
+				checking_data <= '1';
 					if(data_counter /= 31) then
 						nxt_state <= read_data;
 					elsif(data_counter = 31) then
@@ -236,6 +236,9 @@ begin
 	
 	shift_reg_proc : process(clk)
 	begin
+		if(checking_data = '1')then
+			shift_reg = data_bit & shift_reg(max_bits-1 downto 1);
+		end if;
 		-- process to define the shift register that holds the incomming data.  (hint:  don't use canned VHDL functions for shifting)
 	end process shift_reg_proc;
 end behavior;	
