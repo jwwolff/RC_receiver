@@ -224,13 +224,13 @@ begin
 	-- counter to counter the number of data bits	
 	data_counter_proc : process(clk)
 	begin
-		if(rising_edge(clk)) then
+		
 			if((state = init) or (reset = '0')) then
 				data_counter <= 0;
 			elsif (rising_edge(reading_data)) then
 				data_counter <= data_counter + 1;
 			end if;
-		end if;
+	
 		-- process to determine the number of data bits counted in the payload
 	end process data_counter_proc;
 	
